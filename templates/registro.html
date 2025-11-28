@@ -3,26 +3,26 @@
     </div>
 
     <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-        <form method="post" id="frmRegistro" class="ps-2 pe-4">
-            <input type="hidden" id="id" name="id" value="{{ '{{ registro.id }}' }}">
+        <form method="post" id="frmEmpleado" class="ps-2 pe-4">
+            <input type="hidden" id="id" name="id" value="{{ empleado.id }}">
             <div class="mb-2">
                 <span class="text-danger">*</span>
-                <label for="descripcion">Descripción:</label>
-                <input type="text" id="descripcion" name="descripcion" class="form-control form-control-lg while-waiting" value="{{ '{{ registro.descripcion }}' }}" required="true">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control form-control-lg while-waiting" value="{{ empleado.nombre }}" required="true">
             </div>
             <div class="mb-2">
                 <span class="text-danger">*</span>
-                <label for="fechaHora">Fecha Hora:</label>
-                <input type="text" id="fechaHora" name="fechaHora" class="form-control form-control-lg while-waiting" value="{{ '{{ registro.fechaHora || angularjsHora }}' }}" readonly="true">
+                <label for="fechaIngreso">Fecha Ingreso:</label>
+                <input type="date" id="fechaIngreso" name="fechaIngreso" class="form-control form-control-lg while-waiting" value="{{ empleado.fechaIngreso }}" required="true">
             </div>
             <div class="mb-2 text-end">
                 <button class="btn btn-primary btn-lg while-waiting">
-                    <span class="ng-hide" ng-show="!registro.id">Registrar</span>
-                    <span class="ng-hide" ng-show="registro.id">Actualizar</span>
+                    <span class="ng-hide" ng-show="!empleado.id">Registrar</span>
+                    <span class="ng-hide" ng-show="empleado.id">Actualizar</span>
                 </button>
             </div>
         </form>
-        <div class="div-registro"></div>
+        <div class="div-empleado"></div>
     </div>
 
     <div class="col-1 col-sm-1 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
