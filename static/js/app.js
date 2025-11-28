@@ -278,9 +278,9 @@ const PINGURL               = "ping"
 
 
 const DateTime = luxon.DateTime
-let lxFechaHora
+let lxfechaIngreso
 let diffMs = 0
-const configFechaHora = {
+const configfechaIngreso = {
     locale: "es",
     weekNumbers: true,
     // enableTime: true,
@@ -301,13 +301,13 @@ app.config(function ($routeProvider, $locationProvider) {
         templateUrl: "login",
         controller: "loginCtrl"
     })
-    .when("/registros", {
+    .when("/empleados", {
         templateUrl: "registros",
-        controller: "registrosCtrl"
+        controller: "empleadosCtrl"
     })
-    .when("/registros/:id", {
+    .when("/empleados/:id", {
         templateUrl: "registro",
-        controller: "registroCtrl"
+        controller: "empleadoCtrl"
     })
     .when("/notificaciones", {
         templateUrl: "notificaciones",
@@ -328,15 +328,15 @@ app.run(["$rootScope", "$location", "$timeout", function($rootScope, $location, 
     let timesChangesSuccessRoute = 0
 
 
-    function actualizarFechaHora() {
-        lxFechaHora = DateTime.now().plus({
+    function actualizarfechaIngreso() {
+        lxfechaIngreso = DateTime.now().plus({
             milliseconds: diffMs
         })
 
-        $rootScope.angularjsHora = lxFechaHora.setLocale("es").toFormat("hh:mm:ss a")
-        $timeout(actualizarFechaHora, 500)
+        $rootScope.angularjsHora = lxfechaIngreso.setLocale("es").toFormat("hh:mm:ss a")
+        $timeout(actualizarfechaIngreso, 500)
     }
-    actualizarFechaHora()
+    actualizarfechaIngreso()
 
 
     let preferencias = localStorage.getItem("flask2-preferencias")
@@ -437,7 +437,7 @@ app.run(["$rootScope", "$location", "$timeout", function($rootScope, $location, 
                 localStorage.removeItem("flask2-login")
                 localStorage.removeItem("flask2-preferencias")
 
-                localStorage.removeItem("flask2-registros")
+                localStorage.removeItem("flask2-empleados")
                 localStorage.removeItem("flask2-notificaciones")
 
                 const login      = localStorage.getItem("flask2-login")
@@ -477,12 +477,12 @@ app.run(["$rootScope", "$location", "$timeout", function($rootScope, $location, 
 
             // swipe
             if (path.indexOf("notificaciones") != -1) {
-                $rootScope.leftView      = "Registros"
+                $rootScope.leftView      = "empleados"
                 $rootScope.rightView     = ""
-                $rootScope.leftViewLink  = "#/registros"
+                $rootScope.leftViewLink  = "#/empleados"
                 $rootScope.rightViewLink = ""
             }
-            else if (path.indexOf("registros") != -1) {
+            else if (path.indexOf("empleados") != -1) {
                 $rootScope.leftView      = ""
                 $rootScope.rightView     = "Notificaciones"
                 $rootScope.leftViewLink  = ""
@@ -704,16 +704,16 @@ app.run(["$rootScope", "$location", "$timeout", function($rootScope, $location, 
 
                     // gets
                     const startTimeRequest = Date.now()
-                    $.get("fechaHora", function (fechaHora) {
+                    $.get("fechaIngreso", function (fechaIngreso) {
                         const endTimeRequest = Date.now()
                         const rtt            = endTimeRequest - startTimeRequest
                         const delay          = rtt / 2
 
-                        const lxFechaHoraServidor = DateTime.fromFormat(fechaHora, "yyyy-MM-dd hh:mm:ss")
-                        // const fecha = lxFechaHoraServidor.toFormat("dd/MM/yyyy hh:mm:ss")
+                        const lxfechaIngresoServidor = DateTime.fromFormat(fechaIngreso, "yyyy-MM-dd hh:mm:ss")
+                        // const fecha = lxfechaIngresoServidor.toFormat("dd/MM/yyyy hh:mm:ss")
                         const lxLocal = luxon.DateTime.fromMillis(endTimeRequest - delay)
 
-                        diffMs = lxFechaHoraServidor.toMillis() - lxLocal.toMillis()
+                        diffMs = lxfechaIngresoServidor.toMillis() - lxLocal.toMillis()
                     })
 
                     $.get("preferencias", {
@@ -809,21 +809,21 @@ app.controller("loginCtrl", function ($scope, $http, $rootScope) {
 })
 
 
-let timesAccessRouteRegistros = 0
-let lsRegistros               = localStorage.getItem("flask2-registros")
-let registros                 = (lsRegistros ? JSON.parse(lsRegistros) : [])
-app.controller("registrosCtrl", function ($scope, $http, $rootScope) {
-    function buscarRegistros() {
+let timesAccessRouteempleados = 0
+let lsempleados               = localStorage.getItem("flask2-empleados")
+let empleados                 = (lsempleados ? JSON.parse(lsempleados) : [])
+app.controller("empleadosCtrl", function ($scope, $http, $rootScope) {
+    function buscarempleados() {
         $rootScope.sendingRequest    = true
         $rootScope.incompleteRequest = false
         $rootScope.completeRequest   = false
 
-        $.get("registros/buscar", {
+        $.get("empleados/buscar", {
             busqueda: ""
         }, function (r) {
-            localStorage.setItem("flask2-registros", JSON.stringify(r))
-            registros        = r
-            $scope.registros = r
+            localStorage.setItem("flask2-empleados", JSON.stringify(r))
+            empleados        = r
+            $scope.empleados = r
 
             enableAll()
         })
@@ -831,41 +831,41 @@ app.controller("registrosCtrl", function ($scope, $http, $rootScope) {
         disableAll()
     }
 
-    $scope.registros    = registros
-    $rootScope.registro = {
+    $scope.empleados    = empleados
+    $rootScope.empleado = {
         index: "",
         id: "",
-        descripcion: "",
-        fechaHora: ""
+        nombre: "",
+        fechaIngreso: ""
     }
 
-    if (timesAccessRouteRegistros == 0) {
-        timesAccessRouteRegistros++
+    if (timesAccessRouteempleados == 0) {
+        timesAccessRouteempleados++
 
-        $(document).on("click", ".btn-editar-registro", function (event) {
+        $(document).on("click", ".btn-editar-empleado", function (event) {
             const index = parseInt($(this).data("index"))
             const id    = $(this).data("id")
 
-            $rootScope.registro       = registros[index]
-            $rootScope.registro.index = index
+            $rootScope.empleado       = empleados[index]
+            $rootScope.empleado.index = index
 
-            window.location = `#/registros/${id}`
+            window.location = `#/empleados/${id}`
         })
 
-        $(document).on("click", ".btn-eliminar-registro", function (event) {
+        $(document).on("click", ".btn-eliminar-empleado", function (event) {
             const index = parseInt($(this).data("index"))
             const id    = $(this).data("id")
 
-            modal("Quieres eliminar este registro?", "Confirmación", [
+            modal("Quieres eliminar este empleado?", "Confirmación", [
                 {"html": "Cancelar", "class": "btn btn-lg btn-secondary", dismiss: true},
                 {"html": "Eliminar", "class": "btn btn-lg bg-body-tertiary while-waiting", defaultButton: true, fun: function (event) {
-                    $.post("registro/eliminar", {
+                    $.post("empleado/eliminar", {
                         id: id
                     }, function (respuesta) {
                         enableAll()
-                        registros.splice(index, 1)
-                        localStorage.setItem("flask2-registros", JSON.stringify(registros))
-                        $scope.registros = registros
+                        empleados.splice(index, 1)
+                        localStorage.setItem("flask2-empleados", JSON.stringify(empleados))
+                        $scope.empleados = empleados
                         closeModal()
                     })
 
@@ -873,69 +873,69 @@ app.controller("registrosCtrl", function ($scope, $http, $rootScope) {
                 }}])
         })
 
-        buscarRegistros()
+        buscarempleados()
     }
 })
 
 
-let timesAccessRouteRegistro = 0
-app.controller("registroCtrl", function ($scope, $http, $rootScope, $routeParams) {
+let timesAccessRouteempleado = 0
+app.controller("empleadoCtrl", function ($scope, $http, $rootScope, $routeParams) {
     let id = $routeParams.id
 
-    if (!$rootScope.registro) {
-        $rootScope.registro = {
+    if (!$rootScope.empleado) {
+        $rootScope.empleado = {
             index: "",
             id: "",
-            descripcion: "",
-            fechaHora: ""
+            nombre: "",
+            fechaIngreso: ""
         }
     }
 
-    if (!$rootScope.registro.id
+    if (!$rootScope.empleado.id
     &&  id
     &&  !isNaN(id)) {
         disableAll()
         $rootScope.sendingRequest = true
-        $.get(`registro/${id}`, function (registros) {
+        $.get(`empleado/${id}`, function (empleados) {
             enableAll()
-            $rootScope.registro = registros[0]
+            $rootScope.empleado = empleados[0]
         })
     }
 
-    $('.nav-link[href="#/registros"]').addClass("active")
+    $('.nav-link[href="#/empleados"]').addClass("active")
 
-    if (timesAccessRouteRegistro == 0) {
-        timesAccessRouteRegistro++
+    if (timesAccessRouteempleado == 0) {
+        timesAccessRouteempleado++
 
-        $(document).on("submit", "#frmRegistro", function (event) {
+        $(document).on("submit", "#frmempleado", function (event) {
             event.preventDefault()
     
-            $.post("registro/guardar", $(this).serialize(), function (respuesta) {
+            $.post("empleado/guardar", $(this).serialize(), function (respuesta) {
                 enableAll()
 
                 if (respuesta) {
-                    pop(".div-registro", "Registro guardado con &eacute;xito.", "info")
+                    pop(".div-empleado", "empleado guardado con &eacute;xito.", "info")
 
-                    const registro = $rootScope.registro
-                    if (registros.length) {
-                        if (registro.id) {
-                            registros[registro.index] = {
-                                index: registro.index,
-                                id: registro.id,
-                                descripcion: $("#descripcion").val(),
-                                fechaHora: $("#fechaHora").val()
+                    const empleado = $rootScope.empleado
+                    if (empleados.length) {
+                        if (empleado.id) {
+                            empleados[empleado.index] = {
+                                index: empleado.index,
+                                id: empleado.id,
+                                nombre: $("#nombre").val(),
+                                fechaIngreso: $("#fechaIngreso").val()
                             }
                         }
                         else {
-                            registros.unshift({
+                            empleados.unshift({
                                 index: 0,
                                 id: respuesta.id,
-                                descripcion: $("#descripcion").val(),
-                                fechaHora: respuesta.fechaHora
+                                nombre: $("#nombre").val(),
+                                fechaIngreso: respuesta.fechaIngreso
                             })
                         }
 
-                        localStorage.setItem("flask2-registros", JSON.stringify(registros))
+                        localStorage.setItem("flask2-empleados", JSON.stringify(empleados))
                     }
                 }
             })
@@ -955,10 +955,10 @@ app.controller("notificacionesCtrl", function ($scope, $http, $rootScope) {
         $rootScope.incompleteRequest = false
         $rootScope.completeRequest   = false
 
-        $.get("notificaciones/cargar", function (registros) {
-            localStorage.setItem("flask2-notificaciones", JSON.stringify(registros))
-            notificaciones   = registros
-            $scope.registros = registros
+        $.get("notificaciones/cargar", function (empleados) {
+            localStorage.setItem("flask2-notificaciones", JSON.stringify(empleados))
+            notificaciones   = empleados
+            $scope.empleados = empleados
 
             enableAll()
         })
@@ -966,7 +966,7 @@ app.controller("notificacionesCtrl", function ($scope, $http, $rootScope) {
         disableAll()
     }
 
-    $scope.registros = notificaciones
+    $scope.empleados = notificaciones
 
     if (timesAccessRouteNotificaciones == 0) {
         timesAccessRouteNotificaciones++
@@ -1007,3 +1007,4 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000 * 1)
     activeMenuOption(location.hash)
 })
+
