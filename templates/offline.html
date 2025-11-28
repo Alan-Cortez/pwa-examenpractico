@@ -26,7 +26,282 @@
         </div>
     </div>
 
+    <script><!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta name="theme-color" content="#2596be">
+    <link rel="icon" href="/static/favicon.ico" sizes="128x128">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/favicon.ico">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+
+    <title>Sin Conexión - Sistema de Empleados</title>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .offline-container {
+            text-align: center;
+            padding: 3rem;
+            max-width: 500px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .offline-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .wifi-icon {
+            font-size: 5rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .offline-message {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-custom {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary-custom {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #f56565;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 85%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .tips {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .tips strong {
+            color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="offline-container">
+        <div class="offline-card">
+            <i class="bi bi-wifi-off wifi-icon"></i>
+
+            <h1 class="offline-title">
+                <span class="status-indicator"></span>
+                Sin Conexión
+            </h1>
+
+            <p class="offline-message">
+                No se pudo establecer conexión con el servidor.
+                Por favor, verifica tu conexión a internet e intenta nuevamente.
+            </p>
+
+            <div class="d-flex justify-content-center flex-wrap">
+                <button class="btn btn-custom btn-secondary-custom" onclick="history.back();">
+                    <i class="bi bi-arrow-left"></i> Regresar
+                </button>
+                <button class="btn btn-custom btn-primary-custom" onclick="window.location = location.href;">
+                    <i class="bi bi-arrow-clockwise"></i> Reintentar
+                </button>
+            </div>
+
+            <div class="tips">
+                <strong>💡 Consejo:</strong> Esta aplicación funciona offline después de la primera carga.
+                Algunos datos pueden estar disponibles en modo sin conexión.
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Auto-redirigir cuando se recupere la conexión
+        window.addEventListener("online", function (event) {
+            // Mostrar mensaje de éxito
+            document.querySelector('.offline-title').innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> ¡Conectado!';
+            document.querySelector('.offline-message').textContent = 'Conexión restablecida. Redirigiendo...';
+            document.querySelector('.status-indicator').style.background = '#48bb78';
+
+            // Redirigir después de 1 segundo
+            setTimeout(function () {
+                window.location = location.href;
+            }, 1000);
+        });
+
+        // Verificar conexión periódicamente
+        setInterval(function () {
+            if (navigator.onLine) {
+                window.location = location.href;
+            }
+        }, 5000);
+    </script>
+</body>
+
+</html>
         window.addEventListener("online", function (event) {
             window.location = location.href;
         })
