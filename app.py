@@ -67,13 +67,13 @@ def appLogin():
     return render_template("login.html")
     # return "<h5>Hola, soy la view app</h5>"
 
-@app.route("/registros")
-def registros():
-    return render_template("registros.html")
+@app.route("/empleados")
+def empleados():
+    return render_template("empleados.html")
 
-@app.route("/registro")
-def registro():
-    return render_template("registro.html")
+@app.route("/empleado")
+def empleado():
+    return render_template("empleado.html")
 
 @app.route("/notificaciones")
 def notificaciones():
@@ -145,9 +145,9 @@ def preferencias():
     }))
 
 
-@app.route("/registros/buscar", methods=["GET"])
+@app.route("/empleados/buscar", methods=["GET"])
 @login
-def buscarRegistros():
+def buscarEmpleados():
     args     = request.args
     busqueda = args["busqueda"]
     busqueda = f"%{busqueda}%"
@@ -157,20 +157,20 @@ def buscarRegistros():
         cursor = con.cursor(dictionary=True)
         sql    = """
         SELECT id,
-            descripcion,
-            fechaHora
-        FROM registros
-        WHERE descripcion LIKE %s
+            nombre,
+            fechaIngreso
+        FROM empleados
+        WHERE nombre LIKE %s
         ORDER BY id DESC
         LIMIT 25 OFFSET 0
         """
         val    = (busqueda, )
 
         cursor.execute(sql, val)
-        registros = cursor.fetchall()
+        empleados = cursor.fetchall()
 
     except mysql.connector.errors.ProgrammingError as error:
-        registros = []
+        empleados = []
 
     finally:
         if cursor:
@@ -178,33 +178,31 @@ def buscarRegistros():
         if con and con.is_connected():
             con.close()
 
-    return make_response(jsonify(registros))
+    return make_response(jsonify(empleados))
 
-@app.route("/registro/guardar", methods=["POST"])
+@app.route("/empleado/guardar", methods=["POST"])
 @login
-def guardarRegistro():
-    id          = request.form["id"]
-    descripcion = request.form["descripcion"]
-    tz          = pytz.timezone("America/Matamoros")
-    ahora       = datetime.datetime.now(tz)
-    fechaHora   = ahora.strftime("%Y-%m-%d %H:%M:%S")
+def guardarEmpleado():
+    id           = request.form["id"]
+    nombre       = request.form["nombre"]
+    fechaIngreso = request.form["fechaIngreso"]
 
     con    = con_pool.get_connection()
     cursor = con.cursor()
 
     if id:
         sql = """
-        UPDATE registros
-        SET descripcion = %s
+        UPDATE empleados
+        SET nombre = %s, fechaIngreso = %s
         WHERE id = %s
         """
-        val = (descripcion, id)
+        val = (nombre, fechaIngreso, id)
     else:
         sql = """
-        INSERT INTO registros (descripcion, fechaHora)
-        VALUES                (%s,          %s)
+        INSERT INTO empleados (nombre, fechaIngreso)
+        VALUES                (%s,     %s)
         """
-        val =                 (descripcion, fechaHora)
+        val =                 (nombre, fechaIngreso)
     
     cursor.execute(sql, val)
     con.commit()
@@ -219,38 +217,38 @@ def guardarRegistro():
 
     return make_response(jsonify({
         "id": lastInsertId,
-        "fechaHora": fechaHora
+        "fechaIngreso": fechaIngreso
     }))
 
-@app.route("/registro/<int:id>")
+@app.route("/empleado/<int:id>")
 @login
-def editarRegistro(id):
+def editarEmpleado(id):
     con    = con_pool.get_connection()
     cursor = con.cursor(dictionary=True)
     sql    = """
-    SELECT id, descripcion, fechaHora
-    FROM registros
+    SELECT id, nombre, fechaIngreso
+    FROM empleados
     WHERE id = %s
     """
     val    = (id,)
 
     cursor.execute(sql, val)
-    registros = cursor.fetchall()
+    empleados = cursor.fetchall()
     if cursor:
         cursor.close()
     if con and con.is_connected():
         con.close()
 
-    return make_response(jsonify(registros))
+    return make_response(jsonify(empleados))
 
-@app.route("/registro/eliminar", methods=["POST"])
-def eliminarRegistro():
+@app.route("/empleado/eliminar", methods=["POST"])
+def eliminarEmpleado():
     id = request.form["id"]
 
     con    = con_pool.get_connection()
     cursor = con.cursor(dictionary=True)
     sql    = """
-    DELETE FROM registros
+    DELETE FROM empleados
     WHERE id = %s
     """
     val    = (id,)
